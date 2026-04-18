@@ -43,13 +43,11 @@ export class Form implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     // Check if we're in edit mode
-    console.log('Form init - route params:', this.route.snapshot.params);
 
     const id = this.route.snapshot.params['id'];
     if (id) {
       this.isEdit = true;
       const numId = Number(id);
-      console.log('Edit mode - loading robot type with ID:', numId);
       if (!isNaN(numId)) {
         this.loadRobotType(numId);
       } else {
@@ -57,7 +55,6 @@ export class Form implements OnInit, OnDestroy {
         this.isLoading = false;
       }
     } else {
-      console.log('Create mode - no ID in route');
       this.isLoading = false;
     }
   }
@@ -70,12 +67,10 @@ export class Form implements OnInit, OnDestroy {
   loadRobotType(id: number): void {
     this.isLoading = true;
     this.error = null;
-    console.log('Starting to load robot type with ID:', id);
 
     // Timeout safety: if request takes more than 5 seconds, stop loading
     const timeoutId = setTimeout(() => {
       if (this.isLoading) {
-        console.error('Robot type loading timed out');
         this.error = 'Loading took too long. Backend might not be running at http://localhost:5000';
         this.isLoading = false;
         this.cdr.markForCheck();
@@ -88,20 +83,16 @@ export class Form implements OnInit, OnDestroy {
       .subscribe({
         next: (data: RobotType) => {
           clearTimeout(timeoutId);
-          console.log('Successfully loaded robot type:', data);
-          console.log('Robot type name:', data.name);
-          console.log('Robot type dimensions:', data.dimensions);
 
           this.robotType = data;
           this.isLoading = false;
 
           // Force change detection to update form fields
           this.cdr.markForCheck();
-          console.log('Updated robotType in component:', this.robotType);
+          this.sketchComponent.loadSketch(this.robotType.sketch || []);
         },
         error: (err: any) => {
           clearTimeout(timeoutId);
-          console.error('Error loading robot type:', err);
           const errorMsg = err?.error?.message || err?.message || `HTTP ${err?.status || 'Error'}`;
           this.error = `Failed to load robot type: ${errorMsg}`;
           this.isLoading = false;
@@ -109,7 +100,6 @@ export class Form implements OnInit, OnDestroy {
         },
         complete: () => {
           clearTimeout(timeoutId);
-          console.log('Robot type loading subscription completed');
         },
       });
   }
@@ -128,14 +118,7 @@ export class Form implements OnInit, OnDestroy {
     // Get the latest sketch data from the sketch component
     if (this.sketchComponent) {
       this.robotType.sketch = this.sketchComponent.getSketch();
-      console.log('Sketch data before submit:', this.robotType.sketch);
     }
-
-    console.log('Submitting robot type:', {
-      name: this.robotType.name,
-      dimensions: this.robotType.dimensions,
-      sketch: this.robotType.sketch,
-    });
 
     const operation = this.isEdit
       ? this.api.updateRobotType(this.robotType.id, this.robotType)
@@ -143,7 +126,6 @@ export class Form implements OnInit, OnDestroy {
 
     operation.pipe(takeUntil(this.destroy$)).subscribe({
       next: (response) => {
-        console.log('Robot type saved response:', response);
         this.success = this.isEdit
           ? 'Robot type updated successfully!'
           : 'Robot type created successfully!';
@@ -157,13 +139,11 @@ export class Form implements OnInit, OnDestroy {
       error: (err) => {
         this.error = this.isEdit ? 'Failed to update robot type' : 'Failed to create robot type';
         this.isSubmitting = false;
-        console.error('Error saving robot type:', err);
       },
     });
   }
 
   onSketchUpdated(sketch: Point[]): void {
-    console.log('Sketch updated:', sketch);
     this.robotType.sketch = sketch;
     this.cdr.markForCheck();
   }
@@ -172,7 +152,6 @@ export class Form implements OnInit, OnDestroy {
     if (this.sketchComponent) {
       this.sketchComponent.clearSketch();
       this.robotType.sketch = [];
-      console.log('Sketch cleared');
     }
   }
 

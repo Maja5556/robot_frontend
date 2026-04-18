@@ -32,7 +32,6 @@ export class RobotsList implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    console.log('Robots list init');
     this.loadAllData();
   }
 
@@ -48,7 +47,6 @@ export class RobotsList implements OnInit, OnDestroy {
     this.isLoading = true;
     this.error = null;
     this.cdr.markForCheck();
-    console.log('Loading robot types...');
 
     const timeoutId = setTimeout(() => {
       if (this.isLoading) {
@@ -63,10 +61,7 @@ export class RobotsList implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (types: RobotType[]) => {
-          console.log('Robot types loaded:', types);
           this.robotTypes = types;
-
-          console.log('Loading robots...');
 
           this.api
             .getRobots()
@@ -79,7 +74,6 @@ export class RobotsList implements OnInit, OnDestroy {
                   ...robot,
                   robotTypeName: this.getRobotTypeName(robot.robotTypeId),
                 }));
-                console.log('Loaded', this.robots);
                 this.isLoading = false;
                 clearTimeout(timeoutId);
                 this.cdr.markForCheck();

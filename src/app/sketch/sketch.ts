@@ -62,18 +62,15 @@ export class Sketch implements AfterViewInit {
       this.path.add(event.point);
       const point: Point = { x: event.point.x, y: event.point.y };
       this.allPoints.push(point);
-      console.log('Start point: ', event.point);
     };
 
     this.tool.onMouseDrag = (event: paper.ToolEvent) => {
       this.path.add(event.point);
       const point: Point = { x: event.point.x, y: event.point.y };
       this.allPoints.push(point);
-      console.log('Dragged to point: ', event.point);
     };
 
     this.tool.onMouseUp = (event: paper.ToolEvent) => {
-      console.log('End point: ', event.point);
       this.path.smooth();
       this.sketchUpdated.emit(this.allPoints);
     };
@@ -81,7 +78,6 @@ export class Sketch implements AfterViewInit {
 
   loadSketch(points: Point[]): void {
     if (!points || points.length === 0) return;
-
     // Draw the sketch from points
     const paths = this.groupPointsIntoPaths(points);
 
@@ -144,7 +140,6 @@ export class Sketch implements AfterViewInit {
     paper.project.clear();
     this.allPoints = [];
     this.sketchUpdated.emit([]);
-    console.log('Sketch cleared');
   }
 
   getSketch(): Point[] {

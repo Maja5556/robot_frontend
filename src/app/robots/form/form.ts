@@ -39,14 +39,12 @@ export class RobotsForm implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    console.log('Robots form init - route params:', this.route.snapshot.params);
     this.loadRobotTypes();
 
     const id = this.route.snapshot.params['id'];
     if (id) {
       this.isEdit = true;
       const numId = Number(id);
-      console.log('Edit mode - loading robot with ID:', numId);
       if (!isNaN(numId)) {
         this.loadRobot(numId);
       } else {
@@ -54,7 +52,6 @@ export class RobotsForm implements OnInit, OnDestroy {
         this.isLoading = false;
       }
     } else {
-      console.log('Create mode - no ID in route');
       this.isLoading = false;
     }
   }
@@ -70,7 +67,6 @@ export class RobotsForm implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data: RobotType[]) => {
-          console.log('Robot types loaded:', data);
           this.robotTypes = data;
           this.cdr.markForCheck();
         },
@@ -84,7 +80,6 @@ export class RobotsForm implements OnInit, OnDestroy {
   loadRobot(id: number): void {
     this.isLoading = true;
     this.error = null;
-    console.log('Starting to load robot with ID:', id);
 
     const timeoutId = setTimeout(() => {
       if (this.isLoading) {
@@ -101,7 +96,6 @@ export class RobotsForm implements OnInit, OnDestroy {
       .subscribe({
         next: (data: Robot) => {
           clearTimeout(timeoutId);
-          console.log('Successfully loaded robot:', data);
 
           this.robot = data;
           this.isLoading = false;
@@ -117,7 +111,6 @@ export class RobotsForm implements OnInit, OnDestroy {
         },
         complete: () => {
           clearTimeout(timeoutId);
-          console.log('Robot loading subscription completed');
         },
       });
   }
@@ -133,18 +126,12 @@ export class RobotsForm implements OnInit, OnDestroy {
     this.error = null;
     this.success = null;
 
-    console.log('Submitting robot:', {
-      name: this.robot.name,
-      robotTypeId: this.robot.robotTypeId,
-    });
-
     const operation = this.isEdit
       ? this.api.updateRobot(this.robot.id, this.robot)
       : this.api.createRobot(this.robot);
 
     operation.pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
-        console.log('Robot saved response:', response);
         this.success = this.isEdit ? 'Robot updated successfully!' : 'Robot created successfully!';
         this.isSubmitting = false;
 
