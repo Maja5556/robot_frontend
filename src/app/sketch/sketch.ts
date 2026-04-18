@@ -1,5 +1,5 @@
-import { Component, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
-import * as paper from 'paper';
+import { Component, ElementRef, ViewChild, AfterViewInit, HostListener } from '@angular/core';
+import paper from 'paper';
 
 @Component({
   selector: 'app-sketch',
@@ -16,31 +16,55 @@ export class Sketch implements AfterViewInit {
   ngAfterViewInit(): void {
     const canvas = this.canvas.nativeElement;
 
-    // IMPORTANT: match real pixel size
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    // IMPORTANT: wait one frame so layout is correct
+    requestAnimationFrame(() => {
+      this.initPaper(canvas);
+    });
+  }
+
+  private initPaper(canvas: HTMLCanvasElement) {
+    // Set real pixel size (CRITICAL)
+    canvas.width = canvas.clientWidth;
+    canvas.height = canvas.clientHeight;
 
     paper.setup(canvas);
 
-    // ALSO IMPORTANT: set Paper view size explicitly
-    paper.view.viewSize = new paper.Size(window.innerWidth, window.innerHeight);
+    paper.view.viewSize = new paper.Size(canvas.width, canvas.height);
 
     this.tool = new paper.Tool();
-    this.tool.activate(); // 👈 ensures input is enabled
+    this.tool.activate();
 
     this.tool.onMouseDown = (event: paper.ToolEvent) => {
-      this.path = new paper.Path();
-      this.path.strokeColor = new paper.Color('black');
-      this.path.strokeWidth = 3;
+      this.path = new paper.Path({
+        strokeColor: 'black',
+        strokeWidth: 3,
+        strokeCap: 'round',
+        strokeJoin: 'round',
+      });
+
       this.path.add(event.point);
+      console.log('Start point: ', event.point);
     };
 
     this.tool.onMouseDrag = (event: paper.ToolEvent) => {
       this.path.add(event.point);
+      console.log('Dragged to point: ', event.point);
     };
 
-    this.tool.onMouseUp = () => {
+    this.tool.onMouseUp = (event: paper.ToolEvent) => {
+      console.log('End point: ', event.point);
       this.path.smooth();
     };
+  }
+
+  // Handle resize properly (VERY important in Angular apps)
+  @HostListener('window:resize')
+  onResize() {
+    const canvas = this.canvas.nativeElement;
+
+    canvas.width = canvas.clientWidth;
+    canvas.height = canvas.clientHeight;
+
+    paper.view.viewSize = new paper.Size(canvas.width, canvas.height);
   }
 }
