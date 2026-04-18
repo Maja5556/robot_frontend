@@ -1,60 +1,93 @@
-<div class="container">
-  <h1>🤖 Robot Types</h1>
+<div class="list-container">
+  <header class="list-header">
+    <h1>🤖 Robot Types</h1>
+    <button
+      class="btn btn-primary"
+      routerLink="/robot-types/create"
+      aria-label="Create a new robot type"
+    >
+      + Create Robot Type
+    </button>
+  </header>
 
-  <div *ngIf="loading" class="loading">
+  <!-- Success Alert -->
+  <div *ngIf="success" class="alert alert-success" role="status" aria-live="polite">
+    ✓ {{ success }}
+  </div>
+
+  <!-- Error Alert -->
+  <div *ngIf="error" class="alert alert-error" role="alert" aria-live="assertive">
+    ✕ {{ error }}
+    <button class="alert-close-btn" (click)="error = null" aria-label="Close error message">
+      ×
+    </button>
+  </div>
+
+  <div *ngIf="loading" class="loading" role="status" aria-live="polite">
     <p>Loading robot types...</p>
   </div>
 
-  <div *ngIf="error && !loading" class="error">
-    <p>{{ error }}</p>
-    <button (click)="loadRobotTypes()">Retry</button>
-  </div>
-
-  <div *ngIf="!loading && !error" class="robot-types-list">
+  <div *ngIf="!loading && !error" class="robot-types-section">
     <div *ngIf="robotTypes.length === 0" class="no-items">
       <p>No robot types available</p>
-    </div>
-    <div *ngFor="let robot of robotTypes" class="robot-type-item">
-      <h3>{{ robot.name }}</h3>
-      <p><strong>ID:</strong> {{ robot.id }}</p>
-      <p><strong>Dimensions:</strong> {{ robot.dimensions }}</p>
-    </div>
-  </div>
-
-  <div class="add-robot-form">
-    <h2>Add New Robot Type</h2>
-
-    <!-- Success message -->
-    <div *ngIf="successMessage" class="success">
-      <p>{{ successMessage }}</p>
+      <p class="no-items-hint">Create your first robot type to get started</p>
     </div>
 
-    <form (ngSubmit)="addRobotType()">
-      <div class="form-group">
-        <label for="name">Name:</label>
-        <input
-          type="text"
-          id="name"
-          [(ngModel)]="robotType.name"
-          name="name"
-          required
-          [disabled]="isSubmitting"
-        />
-      </div>
-      <div class="form-group">
-        <label for="dimensions">Dimensions:</label>
-        <input
-          type="text"
-          id="dimensions"
-          [(ngModel)]="robotType.dimensions"
-          name="dimensions"
-          required
-          [disabled]="isSubmitting"
-        />
-      </div>
-      <button type="submit" [disabled]="isSubmitting || !robotType.name || !robotType.dimensions">
-        {{ isSubmitting ? 'Adding...' : 'Add Robot Type' }}
-      </button>
-    </form>
+    <div *ngIf="robotTypes.length > 0" class="robot-types-grid">
+      <article
+        *ngFor="let robot of robotTypes"
+        class="robot-type-card"
+        [attr.aria-label]="'Robot type: ' + robot.name"
+        [class.deleting]="isDeleting(robot.id)"
+      >
+        <div class="card-header">
+          <h2>{{ robot.name }}</h2>
+          <span class="type-id" title="Robot Type ID">ID: {{ robot.id }}</span>
+        </div>
+
+        <div class="card-content">
+          <div class="property">
+            <span class="label">Dimensions:</span>
+            <span class="value">{{ robot.dimensions }}</span>
+          </div>
+          <div class="property">
+            <span class="label">Sketch:</span>
+            <span class="value">
+              {{ robot.sketch && robot.sketch.length > 0 ? 'Yes' : 'None' }}
+            </span>
+          </div>
+        </div>
+
+        <div class="card-actions" [attr.aria-busy]="isDeleting(robot.id)">
+          <button
+            class="btn btn-sm btn-secondary"
+            [routerLink]="['/robot-types', robot.id, 'edit']"
+            [disabled]="isDeleting(robot.id)"
+            [attr.aria-label]="'Edit ' + robot.name"
+            title="Edit robot type"
+          >
+            ✎ Edit
+          </button>
+          <button
+            class="btn btn-sm btn-secondary"
+            (click)="onViewSketch(robot.id)"
+            [disabled]="!robot.sketch || robot.sketch.length === 0 || isDeleting(robot.id)"
+            [attr.aria-label]="'View sketch for ' + robot.name"
+            title="View robot type sketch"
+          >
+            👁 View Sketch
+          </button>
+          <button
+            class="btn btn-sm btn-danger"
+            (click)="onDelete(robot.id)"
+            [disabled]="isDeleting(robot.id)"
+            [attr.aria-label]="'Delete ' + robot.name"
+            [attr.aria-busy]="isDeleting(robot.id)"
+          >
+            {{ isDeleting(robot.id) ? '⏳ Deleting...' : '🗑 Delete' }}
+          </button>
+        </div>
+      </article>
+    </div>
   </div>
 </div>

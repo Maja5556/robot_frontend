@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { RobotType } from './_interfaces/robot-type';
+import { Robot } from './_interfaces/robot';
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {
@@ -13,30 +14,40 @@ export class ApiService {
     return this.http.get<RobotType[]>(`${this.baseUrl}/robot-types`);
   }
 
-  getRobotType(id: number) {
-    return this.http.get(`${this.baseUrl}/robot-types/${id}`);
+  getRobotType(id: number): Observable<RobotType> {
+    return this.http.get<RobotType>(`${this.baseUrl}/robot-types/${id}`);
   }
 
-  createRobotType(data: any) {
-    return this.http.post(`${this.baseUrl}/robot-types`, data);
+  createRobotType(data: RobotType): Observable<RobotType> {
+    // Send complete data including sketch
+    return this.http.post<RobotType>(`${this.baseUrl}/robot-types`, {
+      name: data.name,
+      dimensions: data.dimensions,
+      sketch: data.sketch || [],
+    });
   }
 
-  updateRobotType(id: number, data: any) {
-    return this.http.put(`${this.baseUrl}/robot-types/${id}`, data);
+  updateRobotType(id: number, data: RobotType): Observable<RobotType> {
+    // Send complete data including sketch
+    return this.http.put<RobotType>(`${this.baseUrl}/robot-types/${id}`, {
+      name: data.name,
+      dimensions: data.dimensions,
+      sketch: data.sketch || [],
+    });
   }
 
-  deleteRobotType(id: number) {
-    return this.http.delete(`${this.baseUrl}/robot-types/${id}`);
+  deleteRobotType(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/robot-types/${id}`);
   }
 
-  saveSketch(id: number, sketch: any) {
-    return this.http.put(`${this.baseUrl}/robot-types/${id}/sketch`, {
+  saveSketch(id: number, sketch: any): Observable<RobotType> {
+    return this.http.put<RobotType>(`${this.baseUrl}/robot-types/${id}/sketch`, {
       sketch,
     });
   }
 
-  getSketch(id: number) {
-    return this.http.get(`${this.baseUrl}/robot-types/${id}/sketch`);
+  getSketch(id: number): Observable<RobotType> {
+    return this.http.get<RobotType>(`${this.baseUrl}/robot-types/${id}/sketch`);
   }
 
   getRobots() {
@@ -45,5 +56,18 @@ export class ApiService {
 
   createRobot(data: any) {
     return this.http.post(`${this.baseUrl}/robots`, data);
+  }
+  deleteRobot(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/robots/${id}`);
+  }
+  getRobot(id: number): Observable<Robot> {
+    return this.http.get<Robot>(`${this.baseUrl}/robots/${id}`);
+  }
+  updateRobot(id: number, data: Robot): Observable<Robot> {
+    // Send complete data including sketch
+    return this.http.put<Robot>(`${this.baseUrl}/robots/${id}`, {
+      name: data.name,
+      robotTypeId: data.robotTypeId,
+    });
   }
 }

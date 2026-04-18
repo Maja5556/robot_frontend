@@ -1,0 +1,88 @@
+<div class="robots-container">
+  <header class="robots-header">
+    <h1>Robots</h1>
+    <button class="btn btn-primary" (click)="onCreateRobot()" aria-label="Create a new robot">
+      + Create Robot
+    </button>
+  </header>
+
+  <!-- Error Alert -->
+  <div *ngIf="error" class="alert alert-error" role="alert" aria-live="assertive">
+    <span>{{ error }}</span>
+    <button type="button" class="alert-close" (click)="onDismissError()" aria-label="Close error">
+      ×
+    </button>
+  </div>
+
+  <!-- Success Alert -->
+  <div *ngIf="success" class="alert alert-success" role="status" aria-live="polite">
+    <span>{{ success }}</span>
+    <button
+      type="button"
+      class="alert-close"
+      (click)="onDismissSuccess()"
+      aria-label="Close success"
+    >
+      ×
+    </button>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-state" role="status" aria-live="polite">
+    <p>⏳ Loading robots...</p>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!isLoading && robots.length === 0 && !error" class="empty-state">
+    <p>No robots yet. Create one to get started!</p>
+    <button class="btn btn-primary" (click)="onCreateRobot()" aria-label="Create first robot">
+      Create First Robot
+    </button>
+  </div>
+
+  <!-- Robots Grid -->
+  <div *ngIf="!isLoading && robots.length > 0" class="robots-grid">
+    <div
+      *ngFor="let robot of robots"
+      class="robot-card"
+      role="article"
+      [attr.aria-label]="'Robot: ' + robot.name"
+    >
+      <div class="card-header">
+        <h2 class="robot-name">{{ robot.name }}</h2>
+        <span class="robot-type-badge">{{ robot.robotTypeName }}</span>
+      </div>
+
+      <div class="card-body">
+        <div class="robot-info">
+          <span class="label">ID:</span>
+          <span class="value">{{ robot.id }}</span>
+        </div>
+        <div class="robot-info">
+          <span class="label">Type ID:</span>
+          <span class="value">{{ robot.robotTypeId }}</span>
+        </div>
+      </div>
+
+      <div class="card-actions">
+        <button
+          class="btn btn-secondary"
+          (click)="onEditRobot(robot)"
+          [disabled]="deletingId === robot.id"
+          aria-label="Edit robot"
+        >
+          Edit
+        </button>
+        <button
+          class="btn btn-danger"
+          (click)="onDeleteRobot(robot)"
+          [disabled]="deletingId === robot.id"
+          [attr.aria-busy]="deletingId === robot.id"
+          aria-label="Delete robot"
+        >
+          {{ deletingId === robot.id ? 'Deleting...' : 'Delete' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,125 @@
+<div class="form-container">
+  <header class="form-header">
+    <h1>{{ isEdit ? 'Edit' : 'Create' }} Robot Type</h1>
+    <button
+      type="button"
+      class="back-button"
+      (click)="onCancel()"
+      [disabled]="isSubmitting"
+      aria-label="Go back to robot types list"
+    >
+      ← Back
+    </button>
+  </header>
+
+  <form
+    (ngSubmit)="onSubmit()"
+    class="robot-form"
+    [attr.aria-label]="isEdit ? 'Edit robot type form' : 'Create new robot type form'"
+  >
+    <!-- Loading Indicator -->
+    <div *ngIf="isLoading" class="loading-overlay" role="status" aria-live="polite">
+      <p>⏳ Loading robot type details...</p>
+    </div>
+
+    <!-- Error Alert -->
+    <div *ngIf="error" class="alert alert-error" role="alert" aria-live="assertive">
+      {{ error }}
+    </div>
+
+    <!-- Success Alert -->
+    <div *ngIf="success" class="alert alert-success" role="status" aria-live="polite">
+      {{ success }}
+    </div>
+
+    <!-- Name Field -->
+    <div class="form-group">
+      <label for="name" class="form-label">
+        Robot Type Name
+        <span class="required" aria-label="required">*</span>
+      </label>
+      <input
+        id="name"
+        type="text"
+        class="form-input"
+        [(ngModel)]="robotType.name"
+        name="name"
+        placeholder="e.g., Humanoid, Quadruped"
+        required
+        [disabled]="isSubmitting || isLoading"
+        aria-required="true"
+        aria-describedby="name-help"
+      />
+      <small id="name-help" class="form-help"> Enter a descriptive name for the robot type </small>
+    </div>
+
+    <!-- Dimensions Field -->
+    <div class="form-group">
+      <label for="dimensions" class="form-label">
+        Dimensions
+        <span class="required" aria-label="required">*</span>
+      </label>
+      <input
+        id="dimensions"
+        type="text"
+        class="form-input"
+        [(ngModel)]="robotType.dimensions"
+        name="dimensions"
+        placeholder="e.g., 100x100x150mm"
+        required
+        [disabled]="isSubmitting || isLoading"
+        aria-required="true"
+        aria-describedby="dimensions-help"
+      />
+      <small id="dimensions-help" class="form-help">
+        Specify dimensions (height x width x depth)
+      </small>
+    </div>
+
+    <!-- Sketch Editor -->
+    <div class="sketch-section">
+      <label class="form-label" aria-label="Robot sketch drawing area"> Sketch </label>
+      <p class="form-help">Draw the robot sketch below (optional)</p>
+
+      <div class="sketch-canvas-container">
+        <app-sketch
+          #sketchComponent
+          [initialSketch]="robotType.sketch"
+          (sketchUpdated)="onSketchUpdated($event)"
+        ></app-sketch>
+      </div>
+
+      <div class="sketch-actions">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="onClearSketch()"
+          [disabled]="isSubmitting || isLoading"
+          aria-label="Clear sketch drawing"
+        >
+          Clear Sketch
+        </button>
+      </div>
+    </div>
+
+    <!-- Form Actions -->
+    <div class="form-actions">
+      <button
+        type="submit"
+        class="btn btn-primary"
+        [disabled]="isSubmitting || isLoading || !robotType.name || !robotType.dimensions"
+        [attr.aria-busy]="isSubmitting"
+      >
+        {{ isSubmitting ? 'Saving...' : isEdit ? 'Update Robot Type' : 'Create Robot Type' }}
+      </button>
+      <button
+        type="button"
+        class="btn btn-secondary"
+        (click)="onCancel()"
+        [disabled]="isSubmitting || isLoading"
+      >
+        Cancel
+      </button>
+    </div>
+  </form>
+</div>

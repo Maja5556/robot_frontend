@@ -1,0 +1,100 @@
+<div class="form-container">
+  <header class="form-header">
+    <h1>{{ isEdit ? 'Edit' : 'Create' }} Robot</h1>
+    <button
+      type="button"
+      class="back-button"
+      (click)="onCancel()"
+      [disabled]="isSubmitting"
+      aria-label="Go back to robots list"
+    >
+      ← Back
+    </button>
+  </header>
+
+  <form
+    (ngSubmit)="onSubmit()"
+    class="robot-form"
+    [attr.aria-label]="isEdit ? 'Edit robot form' : 'Create new robot form'"
+  >
+    <!-- Loading Indicator -->
+    <div *ngIf="isLoading" class="loading-overlay" role="status" aria-live="polite">
+      <p>⏳ Loading robot details...</p>
+    </div>
+
+    <!-- Error Alert -->
+    <div *ngIf="error" class="alert alert-error" role="alert" aria-live="assertive">
+      {{ error }}
+    </div>
+
+    <!-- Success Alert -->
+    <div *ngIf="success" class="alert alert-success" role="status" aria-live="polite">
+      {{ success }}
+    </div>
+
+    <!-- Name Field -->
+    <div class="form-group">
+      <label for="name" class="form-label">
+        Robot Name
+        <span class="required" aria-label="required">*</span>
+      </label>
+      <input
+        id="name"
+        type="text"
+        class="form-input"
+        [(ngModel)]="robot.name"
+        name="name"
+        placeholder="e.g., Robot A, Humanoid 1"
+        required
+        [disabled]="isSubmitting || isLoading"
+        aria-required="true"
+        aria-describedby="name-help"
+      />
+      <small id="name-help" class="form-help"> Enter a descriptive name for the robot </small>
+    </div>
+
+    <!-- Robot Type Field -->
+    <div class="form-group">
+      <label for="robotType" class="form-label">
+        Robot Type
+        <span class="required" aria-label="required">*</span>
+      </label>
+      <select
+        id="robotType"
+        class="form-input"
+        [(ngModel)]="robot.robotTypeId"
+        name="robotTypeId"
+        required
+        [disabled]="isSubmitting || isLoading"
+        aria-required="true"
+        aria-describedby="robotType-help"
+      >
+        <option value="" disabled>Select a robot type</option>
+        <option *ngFor="let type of robotTypes" [value]="type.id">
+          {{ type.name }}
+        </option>
+      </select>
+      <small id="robotType-help" class="form-help"> Select the robot type for this robot </small>
+    </div>
+
+    <!-- Form Actions -->
+    <div class="form-actions">
+      <button
+        type="submit"
+        class="btn btn-primary"
+        [disabled]="isSubmitting || isLoading || !robot.name || !robot.robotTypeId"
+        [attr.aria-busy]="isSubmitting"
+      >
+        {{ isSubmitting ? 'Saving...' : isEdit ? 'Update Robot' : 'Create Robot' }}
+      </button>
+      <button
+        type="button"
+        class="btn btn-secondary"
+        (click)="onCancel()"
+        [disabled]="isSubmitting || isLoading"
+      >
+        Cancel
+      </button>
+    </div>
+  </form>
+</div>
