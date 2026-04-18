@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RobotType } from '../../_interfaces/robot-type';
@@ -23,7 +23,10 @@ export class List implements OnInit {
   isSubmitting: boolean = false;
   successMessage: string | null = null;
 
-  constructor(private api: ApiService) {}
+  constructor(
+    private api: ApiService,
+    private cdr: ChangeDetectorRef,
+  ) {}
 
   ngOnInit(): void {
     this.loadRobotTypes();
@@ -32,15 +35,19 @@ export class List implements OnInit {
   loadRobotTypes(): void {
     this.loading = true;
     this.error = null;
+    this.cdr.markForCheck();
+
     this.api.getRobotTypes().subscribe({
       next: (data) => {
         this.robotTypes = data;
         this.loading = false;
+        this.cdr.markForCheck();
       },
       error: (err) => {
         this.error = 'Failed to load robot types';
         this.loading = false;
         console.error('Error loading robot types:', err);
+        this.cdr.markForCheck();
       },
     });
   }
@@ -52,6 +59,7 @@ export class List implements OnInit {
 
     this.isSubmitting = true;
     this.successMessage = null;
+    this.cdr.markForCheck();
 
     this.api.createRobotType(this.robotType).subscribe({
       next: (response) => {
@@ -65,15 +73,18 @@ export class List implements OnInit {
           sketch: [],
         };
         this.isSubmitting = false;
+        this.cdr.markForCheck();
         this.loadRobotTypes();
         // Clear success message after 3 seconds
         setTimeout(() => {
           this.successMessage = null;
+          this.cdr.markForCheck();
         }, 3000);
       },
       error: (err) => {
         console.error('Error creating robot type:', err);
         this.isSubmitting = false;
+        this.cdr.markForCheck();
       },
     });
   }
