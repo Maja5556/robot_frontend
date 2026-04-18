@@ -23,10 +23,23 @@
 
   <div class="add-robot-form">
     <h2>Add New Robot Type</h2>
+    
+    <!-- Success message -->
+    <div *ngIf="successMessage" class="success">
+      <p>{{ successMessage }}</p>
+    </div>
+
     <form (ngSubmit)="addRobotType()">
       <div class="form-group">
         <label for="name">Name:</label>
-        <input type="text" id="name" [(ngModel)]="robotType.name" name="name" required />
+        <input 
+          type="text" 
+          id="name" 
+          [(ngModel)]="robotType.name" 
+          name="name" 
+          required 
+          [disabled]="isSubmitting"
+        />
       </div>
       <div class="form-group">
         <label for="dimensions">Dimensions:</label>
@@ -36,9 +49,15 @@
           [(ngModel)]="robotType.dimensions"
           name="dimensions"
           required
+          [disabled]="isSubmitting"
         />
       </div>
-      <button type="submit">Add Robot Type</button>
+      <button 
+        type="submit" 
+        [disabled]="isSubmitting || !robotType.name || !robotType.dimensions"
+      >
+        {{ isSubmitting ? 'Adding...' : 'Add Robot Type' }}
+      </button>
     </form>
   </div>
 </div>

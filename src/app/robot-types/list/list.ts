@@ -20,6 +20,8 @@ export class List implements OnInit {
   };
   loading: boolean = false;
   error: string | null = null;
+  isSubmitting: boolean = false;
+  successMessage: string | null = null;
 
   constructor(private api: ApiService) {}
 
@@ -44,9 +46,17 @@ export class List implements OnInit {
   }
 
   addRobotType() {
+    if (!this.robotType.name || !this.robotType.dimensions) {
+      return;
+    }
+
+    this.isSubmitting = true;
+    this.successMessage = null;
+
     this.api.createRobotType(this.robotType).subscribe({
       next: (response) => {
         console.log('Robot type created:', response);
+        this.successMessage = `Robot type "${this.robotType.name}" created successfully!`;
         // Reset form and reload the list
         this.robotType = {
           id: 0,
@@ -54,10 +64,16 @@ export class List implements OnInit {
           dimensions: '',
           sketch: [],
         };
+        this.isSubmitting = false;
         this.loadRobotTypes();
+        // Clear success message after 3 seconds
+        setTimeout(() => {
+          this.successMessage = null;
+        }, 3000);
       },
       error: (err) => {
         console.error('Error creating robot type:', err);
+        this.isSubmitting = false;
       },
     });
   }
