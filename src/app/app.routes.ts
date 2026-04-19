@@ -11,7 +11,6 @@ export const routes: Routes = [
   { path: 'robot-types', component: List },
   { path: 'robot-types/create', component: Form },
   { path: 'robot-types/:id/edit', component: Form },
-  { path: 'robot-types/:id/sketch', component: Form },
 
   // Robots routes
   { path: 'robots', component: RobotsList },

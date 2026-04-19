@@ -66,16 +66,7 @@
             [attr.aria-label]="'Edit ' + robot.name"
             title="Edit robot type"
           >
-            ✎ Edit
-          </button>
-          <button
-            class="btn btn-sm btn-secondary"
-            (click)="onViewSketch(robot.id)"
-            [disabled]="!robot.sketch || robot.sketch.length === 0 || isDeleting(robot.id)"
-            [attr.aria-label]="'View sketch for ' + robot.name"
-            title="View robot type sketch"
-          >
-            👁 View Sketch
+            ✎ Details
           </button>
           <button
             class="btn btn-sm btn-danger"
