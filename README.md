@@ -1,59 +1,59 @@
-# Robot
+# Robot Management System
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.7.
+This is the frontend application for managing robot blueprints and instances, built with **Angular 21**.
 
-## Development server
+## 🏗️ Architectural Overview
 
-To start a local development server, run:
+The application is designed with a clear separation between data management and graphical drawing:
 
+- **Robot Types**: Used to define blueprints, including names, dimensions, and visual sketches.
+- **Robots**: Used to manage specific instances of robots linked to a chosen Robot Type.
+- **Sketch Component**: A reusable module powered by **Paper.js** that allows users to draw vector paths directly on a canvas.
+- **API Service**: A centralized service that handles all communication with the backend REST API.
+
+---
+
+## ⚙️ Setup & Installation
+
+### 1. Prerequisites
+- **Node.js**: Version 20 or higher.
+- **npm**: Version 10 or higher.
+- **Angular CLI**: Install globally using `npm install -g @angular/cli`.
+
+### 2. Installation
+Navigate to the project directory and install the required dependencies:
 ```bash
-ng serve
+npm install
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
+### 3. Backend Configuration
+Before running the app, ensure it is pointing to your backend server. Open `src/app/api.service.ts` and update the following line if necessary:
+```typescript
+baseUrl = 'http://localhost:5000';
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+---
 
+## 🚀 Running the Application
+
+### Development Server
+To start the application locally, run:
 ```bash
-ng generate --help
+npm start
+```
+Once started, navigate to `http://localhost:4200` in your browser.
+
+### Building for Production
+To create a production-ready build in the `dist/` folder, run:
+```bash
+npm run build
 ```
 
-## Building
-
-To build the project run:
-
+### Running Tests
+To execute unit tests using the Vitest runner, run:
 ```bash
-ng build
+npm test
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+---
+*Generated for the Robot Management Project.*
