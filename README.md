@@ -1,4 +1,4 @@
-# Robot Management System
+# FRONT-END PART of Robot Management System application
 
 This is the frontend application for managing robots and their types, built with **Angular 21**.
 
